@@ -99,24 +99,6 @@ def plot_the_loss_curve(epochs, rmse):
     plt.ylim([rmse.min()*0.97, rmse.max()])
     plt.show()
 
-
-learning_rate = 0.01
-epochs = 30
-batch_size = 30
-
-my_feature = "total_rooms"  # the total number of rooms on a specific city block.
-my_label = "median_house_value" # the median value of a house on a specific city block.
-
-my_model = None
-my_model = build_model(learning_rate)
-weight, bias, epochs, rmse = train_model(my_model, training_df, my_feature,my_label,epochs, batch_size)
-
-print("\nThe learned weight for your model is %.4f" % weight)
-print("The learned bias for your model is %.4f\n" % bias )
-
-plot_the_model(weight, bias, my_feature, my_label)
-plot_the_loss_curve(epochs, rmse)
-
 def predict_house_values(n, feature, label):
   """Predict house values based on a feature."""
 
@@ -131,5 +113,27 @@ def predict_house_values(n, feature, label):
     print ("%5.0f %6.0f %15.0f" % (training_df[feature][10000 + i],
                                    training_df[label][10000 + i],
                                    predicted_values[i][0] ))
-    
-predict_house_values(10, my_feature, my_label)
+
+#@title Double-click to view a possible solution to Task 4.
+
+# Define a synthetic feature
+training_df["rooms_per_person"] = training_df["total_rooms"] / training_df["population"]
+my_feature = "rooms_per_person"
+
+# Tune the hyperparameters.
+learning_rate = 0.06
+epochs = 24
+batch_size = 30
+
+# Don't change anything below this line.
+my_model = build_model(learning_rate)
+weight, bias, epochs, mae = train_model(my_model, training_df,
+                                        my_feature, my_label,
+                                        epochs, batch_size)
+
+plot_the_loss_curve(epochs, mae)
+predict_house_values(15, my_feature, my_label)
+
+
+# Generate a correlation matrix.
+training_df.corr()
